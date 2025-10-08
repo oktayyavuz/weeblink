@@ -33,13 +33,13 @@ export async function GET() {
     }
 
     
-    const totalClicks = user.links.reduce((sum, link) => sum + link.clickCount, 0)
+    const totalClicks = user.links.reduce((sum: number, link) => sum + link.clickCount, 0)
     
     
     const topLinks = user.links.slice(0, 5)
     
     
-    const platformStats = user.links.reduce((acc, link) => {
+    const platformStats = user.links.reduce((acc: Record<string, number>, link) => {
       acc[link.type] = (acc[link.type] || 0) + link.clickCount
       return acc
     }, {} as Record<string, number>)
