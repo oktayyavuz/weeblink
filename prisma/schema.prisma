@@ -1,0 +1,155 @@
+
+
+
+
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  password      String?
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts Account[]
+  sessions Session[]
+  links    Link[]
+  theme    Theme?
+  settings Settings?
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Link {
+  id          String   @id @default(cuid())
+  title       String
+  url         String
+  description String?
+  icon        String?
+  type        LinkType @default(CUSTOM)
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  clickCount  Int      @default(0)
+  likeCount   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, order])
+}
+
+model Theme {
+  id                    String   @id @default(cuid())
+  name                  String   @default("Default Theme")
+  primaryColor          String   @default("#3B82F6")
+  secondaryColor        String   @default("#1E40AF")
+  backgroundColor       String   @default("#0F172A")
+  textColor             String   @default("#FFFFFF")
+  cardBackgroundColor   String   @default("rgba(255, 255, 255, 0.1)")
+  cardBorderColor       String   @default("rgba(255, 255, 255, 0.2)")
+  borderRadius          String   @default("12px")
+  fontFamily            String   @default("Inter")
+  fontSize              String   @default("16px")
+  fontWeight            String   @default("400")
+  lineHeight            String   @default("1.5")
+  customCSS             String?
+  backgroundAnimation   String   @default("stars")
+  animationSpeed        String   @default("normal")
+  blurIntensity         String   @default("10px")
+  shadowIntensity       String   @default("0.25")
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Settings {
+  id              String   @id @default(cuid())
+  siteTitle       String   @default("WeebLink")
+  siteDescription String   @default("My awesome link collection")
+  siteLogo        String?
+  customDomain    String?
+  analyticsId     String?
+  isPublic        Boolean  @default(true)
+  bio             String?
+  location        String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum LinkType {
+  CUSTOM
+  INSTAGRAM
+  TWITTER
+  FACEBOOK
+  YOUTUBE
+  TIKTOK
+  LINKEDIN
+  GITHUB
+  DISCORD
+  TELEGRAM
+  WHATSAPP
+  SPOTIFY
+  TWITCH
+  SNAPCHAT
+  PINTEREST
+  REDDIT
+  MEDIUM
+  BEHANCE
+  DRIBBBLE
+  FIGMA
+  EMAIL
+  PHONE
+  WEBSITE
+}
