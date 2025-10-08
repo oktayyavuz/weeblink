@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import fs from "fs"
 import path from "path"
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const user = await prisma.user.findFirst({
       include: {

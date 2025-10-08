@@ -16,7 +16,6 @@ import {
   ExternalLink,
   User
 } from "lucide-react"
-import ThemeCustomizer from "@/components/ThemeCustomizer"
 import PreviewModal from "@/components/PreviewModal"
 import ImageUpload from "@/components/ImageUpload"
 import LogoUpload from "@/components/LogoUpload"
@@ -294,25 +293,6 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       console.error("Error deleting link:", error)
-    }
-  }
-
-  const handleUpdateSettings = async (updates: Partial<SettingsData>) => {
-    try {
-      const response = await fetch("/api/admin/settings", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updates),
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        setSettings(data.settings)
-      }
-    } catch (error) {
-      console.error("Error updating settings:", error)
     }
   }
 

@@ -55,7 +55,7 @@ interface MainPageProps {
   settings: Settings
 }
 
-export default function MainPage({ links, theme, user, settings }: MainPageProps) {
+export default function MainPage({ links, theme, user }: MainPageProps) {
   
   useEffect(() => {
     

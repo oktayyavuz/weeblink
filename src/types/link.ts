@@ -19,4 +19,7 @@ export type LinkType =
   | "MEDIUM"
   | "BEHANCE"
   | "DRIBBBLE"
+  | "FIGMA"
+  | "EMAIL"
+  | "PHONE"
   | "WEBSITE"

@@ -2,7 +2,6 @@
 
 import { useState, useRef } from "react"
 import { Upload, X, Image as ImageIcon } from "lucide-react"
-import { motion } from "framer-motion"
 
 interface LogoUploadProps {
   currentLogo?: string | null

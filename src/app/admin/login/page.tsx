@@ -3,7 +3,7 @@
 import { signIn } from "next-auth/react"
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { Mail, Lock, User } from "lucide-react"
+import { Lock, User } from "lucide-react"
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
