@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, Smartphone, Tablet, Monitor, RefreshCw } from "lucide-react"
 import MainPage from "./MainPage"
-import { LinkType } from "@prisma/client"
+import { LinkType } from "@/types/link"
 
 interface ThemeData {
   primaryColor: string

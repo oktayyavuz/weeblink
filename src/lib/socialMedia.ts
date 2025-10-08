@@ -1,4 +1,4 @@
-import { LinkType } from "@prisma/client"
+import { LinkType } from "@/types/link"
 import { 
   FaInstagram, 
   FaTwitter, 

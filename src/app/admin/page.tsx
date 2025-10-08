@@ -20,7 +20,7 @@ import ThemeCustomizer from "@/components/ThemeCustomizer"
 import PreviewModal from "@/components/PreviewModal"
 import ImageUpload from "@/components/ImageUpload"
 import LogoUpload from "@/components/LogoUpload"
-import { LinkType } from "@prisma/client"
+import { LinkType } from "@/types/link"
 
 interface LinkData {
   id: string

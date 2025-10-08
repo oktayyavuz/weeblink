@@ -70,8 +70,8 @@ WeebLink, tamamen özelleştirilebilir, modern bir Linktree klonudur. Prisma ORM
    ```
 
 6. **Development server'ı başlatın**
-   ```bash
-   npm run dev
+```bash
+npm run dev
    ```
 
 7. **Tarayıcıda açın**

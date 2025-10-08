@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 import LinkCard from "@/components/LinkCard"
 import ProfileCard from "@/components/ProfileCard"
 import BackgroundAnimation from "@/components/BackgroundAnimation"
-import { LinkType } from "@prisma/client"
+import { LinkType } from "@/types/link"
 import { useEffect } from "react"
 
 interface Link {

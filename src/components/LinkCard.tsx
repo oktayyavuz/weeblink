@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import { ExternalLink, Heart, Share2 } from "lucide-react"
-import { LinkType } from "@prisma/client"
+import { LinkType } from "@/types/link"
 import { getSocialMediaConfig } from "@/lib/socialMedia"
 import { useState } from "react"
 
