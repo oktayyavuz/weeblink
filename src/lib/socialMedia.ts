@@ -172,8 +172,47 @@ export function getSocialMediaConfig(type: LinkType) {
 
 export function formatUrl(type: LinkType, value: string): string {
   const config = getSocialMediaConfig(type)
-  if (config.urlPattern && !value.startsWith(config.urlPattern)) {
-    return config.urlPattern + value
+  
+  if (type === "CUSTOM") {
+    return value
   }
+  
+  
+  if (value.startsWith("http://") || value.startsWith("https://")) {
+    return value
+  }
+  
+  
+  if (config.urlPattern) {
+    
+    const cleanValue = value.replace(/^@/, "")
+    return config.urlPattern + cleanValue
+  }
+  
   return value
+}
+
+export function validateUrl(type: LinkType, url: string): boolean {
+  if (type === "CUSTOM") {
+    try {
+      new URL(url)
+      return true
+    } catch {
+      return false
+    }
+  }
+  
+  const config = getSocialMediaConfig(type)
+  return url.startsWith(config.urlPattern || "")
+}
+
+export function extractUsername(type: LinkType, url: string): string {
+  const config = getSocialMediaConfig(type)
+  if (!config.urlPattern) return ""
+  
+  if (url.startsWith(config.urlPattern)) {
+    return url.replace(config.urlPattern, "")
+  }
+  
+  return ""
 }

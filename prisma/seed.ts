@@ -5,10 +5,14 @@ const prisma = new PrismaClient()
 
 async function main() {
   
-  const adminEmail = process.env.ADMIN_EMAIL || "admin@weebdev.com"
-  const adminPassword = process.env.ADMIN_PASSWORD || "admin123"
-  const adminName = process.env.ADMIN_NAME || "Admin"
+  const adminEmail = process.env.ADMIN_EMAIL
+  const adminPassword = process.env.ADMIN_PASSWORD 
+  const adminName = process.env.ADMIN_NAME 
   
+  if (!adminEmail || !adminPassword || !adminName) {
+    throw new Error("ADMIN_EMAIL, ADMIN_PASSWORD ve ADMIN_NAME değişkenleri ayarlanmalıdır.")
+  }
+
   const hashedPassword = await bcrypt.hash(adminPassword, 12)
   
   const user = await prisma.user.upsert({
@@ -52,8 +56,8 @@ async function main() {
     update: {},
     create: {
       userId: user.id,
-      siteTitle: "WeebLink",
-      siteDescription: "My awesome link collection",
+      siteTitle: process.env.APP_NAME || "WeebLink",
+      siteDescription: process.env.APP_DESCRIPTION || "My awesome link collection",
       isPublic: true,
     },
   })

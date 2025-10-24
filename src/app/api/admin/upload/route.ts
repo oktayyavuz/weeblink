@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     }
 
     
-    const uploadDir = path.join(process.cwd(), "public", "uploads")
+    const uploadDir = path.join(process.cwd(), process.env.UPLOAD_DIR || "public/uploads")
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true })
     }
@@ -31,8 +31,11 @@ export async function POST(request: NextRequest) {
     }
 
     
-    if (file.size > 5 * 1024 * 1024) {
-      return NextResponse.json({ error: "File size must be less than 5MB" }, { status: 400 })
+    const maxFileSize = parseInt(process.env.MAX_FILE_SIZE || "5242880") 
+    if (file.size > maxFileSize) {
+      return NextResponse.json({ 
+        error: `File size must be less than ${Math.round(maxFileSize / 1024 / 1024)}MB` 
+      }, { status: 400 })
     }
 
     

@@ -1,4 +1,4 @@
-// LinkType enum'unu merkezi olarak tanımlayalım
+
 export type LinkType = 
   | "CUSTOM"
   | "INSTAGRAM" 
@@ -23,3 +23,20 @@ export type LinkType =
   | "EMAIL"
   | "PHONE"
   | "WEBSITE"
+
+
+export interface Link {
+  id: string
+  title: string
+  url: string
+  description?: string | null
+  icon?: string | null
+  type: LinkType
+  order: number
+  isActive: boolean
+  clickCount: number
+  likeCount: number
+  createdAt: Date
+  updatedAt: Date
+  userId: string
+}

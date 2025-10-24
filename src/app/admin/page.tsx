@@ -19,7 +19,10 @@ import {
 import PreviewModal from "@/components/PreviewModal"
 import ImageUpload from "@/components/ImageUpload"
 import LogoUpload from "@/components/LogoUpload"
+import LinkEditModal, { LinkFormData } from "@/components/LinkEditModal"
+import SortableLinkList from "@/components/SortableLinkList"
 import { LinkType } from "@/types/link"
+import { getSocialMediaConfig } from "@/lib/socialMedia"
 
 interface LinkData {
   id: string
@@ -120,6 +123,8 @@ export default function AdminDashboard() {
     location: "",
   })
   const [isSavingSettings, setIsSavingSettings] = useState(false)
+  const [isLinkModalOpen, setIsLinkModalOpen] = useState(false)
+  const [editingLink, setEditingLink] = useState<LinkData | null>(null)
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -207,28 +212,39 @@ export default function AdminDashboard() {
     }
   }
 
-  const handleAddLink = async () => {
-    const newLink = {
-      title: "Yeni Link",
-      url: "https://example.com",
-      description: "Link açıklaması",
-      type: "CUSTOM" as const,
-      order: links.length,
-    }
+  const handleAddLink = () => {
+    setEditingLink(null)
+    setIsLinkModalOpen(true)
+  }
 
+  const handleEditLinkClick = (link: LinkData) => {
+    setEditingLink(link)
+    setIsLinkModalOpen(true)
+  }
+
+  const handleSaveLink = async (linkData: LinkFormData) => {
     try {
+      const linkPayload = {
+        ...linkData,
+        order: editingLink ? editingLink.order : links.length,
+      }
+
       const response = await fetch("/api/admin/links", {
-        method: "POST",
+        method: editingLink ? "PUT" : "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newLink),
+        body: JSON.stringify(editingLink ? { id: editingLink.id, ...linkPayload } : linkPayload),
       })
 
       if (response.ok) {
         const data = await response.json()
-        setLinks([...links, data.link])
         
+        if (editingLink) {
+          setLinks(links.map(link => link.id === editingLink.id ? data.link : link))
+        } else {
+          setLinks([...links, data.link])
+        }
         
         await fetch("/api/revalidate", {
           method: "POST",
@@ -239,7 +255,7 @@ export default function AdminDashboard() {
         })
       }
     } catch (error) {
-      console.error("Error adding link:", error)
+      console.error("Error saving link:", error)
     }
   }
 
@@ -293,6 +309,38 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       console.error("Error deleting link:", error)
+    }
+  }
+
+  const handleReorderLinks = async (reorderedLinks: LinkData[]) => {
+    setLinks(reorderedLinks)
+    
+    
+    try {
+      const updatePromises = reorderedLinks.map((link, index) =>
+        fetch("/api/admin/links", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: link.id,
+            order: index,
+          }),
+        })
+      )
+
+      await Promise.all(updatePromises)
+      
+      await fetch("/api/revalidate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ path: "/" }),
+      })
+    } catch (error) {
+      console.error("Error reordering links:", error)
     }
   }
 
@@ -583,71 +631,12 @@ export default function AdminDashboard() {
                 </button>
               </div>
 
-              <div className="grid gap-4">
-                {links.map((link) => (
-                  <div
-                    key={link.id}
-                    className="bg-gray-800 border border-gray-700 rounded-lg p-4 hover:bg-gray-750 transition-colors"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-gray-700 rounded-lg flex items-center justify-center">
-                          <Link className="w-6 h-6 text-gray-300" />
-                        </div>
-                        <div>
-                          <h3 className="font-semibold">{link.title}</h3>
-                          <p className="text-sm text-gray-400">{link.url}</p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            {link.clickCount} tıklama
-                          </p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-2">
-                        <button 
-                          onClick={() => {
-                            const newTitle = prompt("Yeni başlık:", link.title)
-                            if (newTitle) {
-                              handleEditLink(link.id, { title: newTitle })
-                            }
-                          }}
-                          className="p-2 text-gray-400 hover:text-white transition-colors"
-                          title="Başlığı Düzenle"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </button>
-                        <button 
-                          onClick={() => {
-                            const newDescription = prompt("Yeni açıklama:", link.description || "")
-                            if (newDescription !== null) {
-                              handleEditLink(link.id, { description: newDescription })
-                            }
-                          }}
-                          className="p-2 text-gray-400 hover:text-yellow-400 transition-colors"
-                          title="Açıklamayı Düzenle"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                          </svg>
-                        </button>
-                        <button 
-                          onClick={() => handleDeleteLink(link.id)}
-                          className="p-2 text-gray-400 hover:text-red-400 transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                        <a
-                          href={link.url}
-                          target="_blank"
-                          className="p-2 text-gray-400 hover:text-blue-400 transition-colors"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <SortableLinkList
+                links={links}
+                onEdit={handleEditLinkClick}
+                onDelete={handleDeleteLink}
+                onReorder={handleReorderLinks}
+              />
             </div>
           )}
 
@@ -1124,6 +1113,14 @@ export default function AdminDashboard() {
           }}
         />
       )}
+
+      {/* Link Edit Modal */}
+      <LinkEditModal
+        isOpen={isLinkModalOpen}
+        onClose={() => setIsLinkModalOpen(false)}
+        onSave={handleSaveLink}
+        link={editingLink}
+      />
     </div>
   )
 }

@@ -51,16 +51,21 @@ WeebLink, tamamen özelleştirilebilir, modern bir Linktree klonudur. Prisma ORM
 
    # NextAuth
    NEXTAUTH_URL="http://localhost:3000"
-   NEXTAUTH_SECRET="your-secret-key-here"
+   NEXTAUTH_SECRET="your-secret-key-here-change-this-in-production"
 
-   # Admin Credentials
+   # Admin Credentials (Required)
    ADMIN_EMAIL="admin@weeblink.com"
    ADMIN_PASSWORD="your-secure-password"
    ADMIN_NAME="Admin"
 
-   # Google OAuth (opsiyonel)
-   GOOGLE_CLIENT_ID="your-google-client-id"
-   GOOGLE_CLIENT_SECRET="your-google-client-secret"
+   # App Configuration
+   APP_URL="http://localhost:3000"
+   APP_NAME="WeebLink"
+   APP_DESCRIPTION="Modern, customizable Linktree clone"
+
+   # Upload Configuration
+   UPLOAD_DIR="public/uploads"
+   MAX_FILE_SIZE="5242880" # 5MB in bytes
    ```
 
 5. **Veritabanını oluşturun ve seed edin**
